@@ -67,8 +67,8 @@ public_users.get('/author', async (req, res) => {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  const book = Object.values(books).find(item => item.title === req.params.title);
-  if(book)  return res.status(200).json(book);
+  const book = Object.values(books).filter(item => item.title === req.params.title);
+  if(book.length > 0)  return res.status(200).json(book);
   return res.status(404).json({message: "book not found"});
 });
 
