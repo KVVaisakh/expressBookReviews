@@ -28,8 +28,18 @@ public_users.get('/books', async (req, res) => {
   try {
     const booksFromAxios = await axios.get('http://localhost:5000/');
     return res.status(200).json(booksFromAxios.data);
-  } catch {
-    return res.status(404).json({message: "error in finding books"});
+  } catch(error) {
+    if (error.response) {
+      return res.status(error.response.status).json({
+        message: "Failed to retrieve books",
+        error: error.response.data
+      });
+    }
+
+    return res.status(500).json({
+      message: "Unable to connect to the book service",
+      error: error.message
+    });
   }
 })
 
@@ -43,15 +53,16 @@ public_users.get('/isbn', async (req, res) => {
   try {
     const bookFromAxios = await axios.get(`http://localhost:5000/isbn/${req.query.value}`);
     return res.status(200).json(bookFromAxios.data);
-  } catch {
+  } catch(error) {
     if (error.response) {
-      return res
-        .status(error.response.status)
-        .json(error.response.data);
+      return res.status(error.response.status).json({
+        message: "Failed to retrieve books by isbn",
+        error: error.response.data
+      });
     }
 
     return res.status(500).json({
-      message: "Unable to retrieve books",
+      message: "Unable to connect to the book service",
       error: error.message
     });
   }
@@ -71,13 +82,14 @@ public_users.get('/author', async (req, res) => {
     return res.status(200).json(bookFromAxios.data);
   } catch(error) {
     if (error.response) {
-      return res
-        .status(error.response.status)
-        .json(error.response.data);
+      return res.status(error.response.status).json({
+          message: "Failed to retrieve books by author",
+          error: error.response.data
+        });
     }
 
     return res.status(500).json({
-      message: "Unable to retrieve books",
+      message: "Unable to connect to the book service",
       error: error.message
     });
   }
@@ -97,13 +109,14 @@ public_users.get('/title', async (req, res) => {
     return res.status(200).json(bookFromAxios.data);
   } catch(error) {
     if (error.response) {
-      return res
-        .status(error.response.status)
-        .json(error.response.data);
+      return res.status(error.response.status).json({
+        message: "Failed to retrieve books by title",
+        error: error.response.data
+      });
     }
 
     return res.status(500).json({
-      message: "Unable to retrieve books",
+      message: "Unable to connect to the book service",
       error: error.message
     });
   }
