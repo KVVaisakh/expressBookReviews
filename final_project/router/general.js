@@ -38,6 +38,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
   return res.status(200).json(books[req.params.isbn]);
  });
 
+// Get book details based on ISBN
 public_users.get('/isbn', async (req, res) => {
   try {
     const bookFromAxios = await axios.get(`http://localhost:5000/isbn/${req.query.value}`);
@@ -53,6 +54,7 @@ public_users.get('/author/:author',function (req, res) {
   return res.status(200).json(book);
 });
 
+// Get book details based on author
 public_users.get('/author', async (req, res) => {
   try {
     const bookFromAxios = await axios.get(`http://localhost:5000/author/${req.query.value}`);
@@ -68,8 +70,10 @@ public_users.get('/title/:title',function (req, res) {
   return res.status(200).json(book);
 });
 
+// Get all books based on title
 public_users.get('/title', async (req, res) => {
   try {
+    // gets book with title from the route /title/:title
     const bookFromAxios = await axios.get(`http://localhost:5000/title/${req.query.value}`);
     return res.status(200).json(bookFromAxios.data);
   } catch {
