@@ -1,4 +1,7 @@
 C:\Users\vaisa>curl -b cookies.txt -X PUT "http://localhost:5000/customer/auth/review/1?review=Bad%20book"
 {
-    "message": "review saved successfully"
+    "message": "review saved successfully",
+    "savedObject": {
+        "USER1": "Bad book"
+    }
 }

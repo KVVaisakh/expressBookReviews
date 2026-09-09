@@ -24,7 +24,7 @@ regd_users.post("/login", (req,res) => {
     return res.status(404).json("invalid user or wrong password")
   const accessToken = jwt.sign({user: username}, 'highly_secure', { expiresIn: 60 * 60 });
   req.session.authenticated = {accessToken};
-  return res.status(200).json("successfully logged in");
+  return res.status(200).json(`registered user - ${username} successfully logged in`);
 });
 
 // Add a book review
@@ -35,7 +35,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   if(!review) return res.status(404).json({message: "invalid review"});
   if(!book)  return res.status(404).json({message: "invalid isbn"});
   book.reviews[user] = review;
-  return res.status(200).json({message: "review saved successfully"});
+  return res.status(200).json({message: "review saved successfully", savedObject: book.reviews});
 });
 
 regd_users.delete("/auth/review/:isbn", (req, res) => {
