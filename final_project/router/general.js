@@ -2,6 +2,7 @@ const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
+const axios = require('axios');
 const public_users = express.Router();
 
 
@@ -23,10 +24,28 @@ public_users.get('/',function (req, res) {
   return res.status(200).json(books);
 });
 
+public_users.get('/books', async (req, res) => {
+  try {
+    const booksFromAxios = await axios.get('http://localhost:5000/');
+    return res.status(200).json(booksFromAxios.data);
+  } catch {
+    return res.status(404).json({message: "error in finding books"});
+  }
+})
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   return res.status(200).json(books[req.params.isbn]);
  });
+
+public_users.get('/isbn', async (req, res) => {
+  try {
+    const bookFromAxios = await axios.get(`http://localhost:5000/isbn/${req.query.value}`);
+    return res.status(200).json(bookFromAxios.data);
+  } catch {
+    return res.status(404).json({message: "error in finding books"});
+  }
+})
 
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
@@ -34,16 +53,34 @@ public_users.get('/author/:author',function (req, res) {
   return res.status(200).json(book);
 });
 
+public_users.get('/author', async (req, res) => {
+  try {
+    const bookFromAxios = await axios.get(`http://localhost:5000/author/${req.query.value}`);
+    return res.status(200).json(bookFromAxios.data);
+  } catch {
+    return res.status(404).json({message: "error in finding books"});
+  }
+})
+
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   const book = Object.values(books).find(item => item.title === req.params.title);
-  return res.status(300).json(book);
+  return res.status(200).json(book);
 });
+
+public_users.get('/title', async (req, res) => {
+  try {
+    const bookFromAxios = await axios.get(`http://localhost:5000/title/${req.query.value}`);
+    return res.status(200).json(bookFromAxios.data);
+  } catch {
+    return res.status(404).json({message: "error in finding books"});
+  }
+})
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   const bookReview = books[req.params.isbn].reviews;
-  return res.status(300).json(bookReview);
+  return res.status(200).json(bookReview);
 });
 
 module.exports.general = public_users;
