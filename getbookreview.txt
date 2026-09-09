@@ -1,4 +1,2 @@
 D:\projects\express.js\expressBookReviews\final_project>curl http://localhost:5000/review/1
-{
-    "abc": "xyz"
-}
+{}

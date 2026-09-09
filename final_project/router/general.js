@@ -50,8 +50,9 @@ public_users.get('/isbn', async (req, res) => {
 
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  const book = Object.values(books).filter(item => item.author === req.params.author);
-  return res.status(200).json(book);
+  const booksList = Object.values(books).filter(item => item.author === req.params.author);
+  if(booksList.length === 0)  res.status(404).json({message: "no books by the author"})
+  return res.status(200).json(booksList);
 });
 
 // Get book details based on author
@@ -59,25 +60,25 @@ public_users.get('/author', async (req, res) => {
   try {
     const bookFromAxios = await axios.get(`http://localhost:5000/author/${req.query.value}`);
     return res.status(200).json(bookFromAxios.data);
-  } catch {
-    return res.status(404).json({message: "error in finding books"});
+  } catch(error) {
+    return res.status(404).json(error.response?.data);
   }
 })
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   const book = Object.values(books).find(item => item.title === req.params.title);
-  return res.status(200).json(book);
+  if(book)  return res.status(200).json(book);
+  return res.status(404).json({message: "book not found"});
 });
 
 // Get all books based on title
 public_users.get('/title', async (req, res) => {
   try {
-    // gets book with title from the route /title/:title
     const bookFromAxios = await axios.get(`http://localhost:5000/title/${req.query.value}`);
     return res.status(200).json(bookFromAxios.data);
-  } catch {
-    return res.status(404).json({message: "error in finding books"});
+  } catch(error) {
+    return res.status(404).json(error.response?.data);
   }
 })
 
