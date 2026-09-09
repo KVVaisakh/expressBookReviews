@@ -71,7 +71,7 @@ public_users.get('/isbn', async (req, res) => {
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   const booksList = Object.values(books).filter(item => item.author === req.params.author);
-  if(booksList.length === 0)  res.status(404).json({message: "no books by the author"})
+  if(booksList.length === 0)  return res.status(404).json({message: "no books by the author"})
   return res.status(200).json(booksList);
 });
 
