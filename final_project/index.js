@@ -7,6 +7,7 @@ const genl_routes = require('./router/general.js').general;
 const app = express();
 
 app.use(express.json());
+app.set('json spaces', 4);
 
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
@@ -14,7 +15,8 @@ app.use("/customer/auth/*", function auth(req,res,next){
     if(req.session.authenticated) {
         const token = req.session.authenticated["accessToken"];
         try {
-            jwt.verify(token, "highly_secure");
+            const data = jwt.verify(token, "highly_secure");
+            req.session.user = data.user;
             next();
         } catch (err) {
             return res.status(401).send("Invalid token");
