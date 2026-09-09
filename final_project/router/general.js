@@ -20,91 +20,105 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-// public_users.get('/',function (req, res) {
-//   return res.status(200).json(books);
-// });
+public_users.get('/',function (req, res) {
+  return res.status(200).json(books);
+});
 
-public_users.get('/', async (req, res) => {
+public_users.get('/books', async (req, res) => {
   try {
-    const booksFromPromise = await new Promise((resolve, reject) => {
-      resolve(books)
-    })
-    return res.status(200).json(booksFromPromise);
+    const booksFromAxios = await axios.get('http://localhost:5000/');
+    return res.status(200).json(booksFromAxios.data);
   } catch(error) {
-    return res.status(404).json({
-      message: error.message,
-      error: "Failed to get books"
-    });
-  }
-})
-
-// Get book details based on ISBN
-// public_users.get('/isbn/:isbn',function (req, res) {
-//   return res.status(200).json(books[req.params.isbn]);
-//  });
-
-// Get book details based on ISBN
-public_users.get('/isbn/:isbn', async (req, res) => {
-  try {
-    const bookFromPromise = await new Promise((resolve, reject) => {
-      const book = books[req.params.isbn];
-      if (book) resolve(books[req.params.isbn]);
-      else reject(new Error("book not found"))
-    });
-    return res.status(200).json(bookFromPromise);
-  } catch(error) {
-    return res.status(404).json({
-      message: error.message,
-      error: "Failed to retrieve books by isbn"
-    });
-  }
-})
-
-// Get book details based on author
-// public_users.get('/author/:author',function (req, res) {
-//   const booksList = Object.values(books).filter(item => item.author === req.params.author);
-//   if(booksList.length === 0)  res.status(404).json({message: "no books by the author"})
-//   return res.status(200).json(booksList);
-// });
-
-// Get book details based on author
-public_users.get('/author/:author',async function (req, res) {
-  try {
-    const bookFromPromise = await new Promise((resolve, reject) => {
-      const booksList = Object.values(books).filter(item => item.author === req.params.author);
-      if(booksList.length === 0)  reject(new Error("no books by the author"))
-      resolve(booksList);
-    })
-    return res.status(200).json(bookFromPromise);
-  } catch(error) {
-    return res.status(404).json({
-      message: error.message,
-      error: "Failed to retrieve books by author"
-    });
-  }
-})
-
-// Get all books based on title
-// public_users.get('/title/:title',function (req, res) {
-//   const book = Object.values(books).filter(item => item.title === req.params.title);
-//   if(book.length > 0)  return res.status(200).json(book);
-//   return res.status(404).json({message: "book not found"});
-// });
-
-// Get all books based on title
-public_users.get('/title/:title', async (req, res) => {
-  try {
-    const booksFromPromise = await new Promise((resolve, reject) => {
-      const book = Object.values(books).filter(item => item.title === req.params.title);
-      if(book.length > 0)  resolve(book);
-      return reject(new Error("book not found"));
-    });
-    return res.status(200).json(booksFromPromise);
-  } catch(error) {
-      return res.status(404).json({
-        message: error.message,
-        error: "Failed to retrieve books by title"
+    if (error.response) {
+      return res.status(error.response.status).json({
+        message: "Failed to retrieve books",
+        error: error.response.data
       });
+    }
+
+    return res.status(500).json({
+      message: "Unable to connect to the book service",
+      error: error.message
+    });
+  }
+})
+
+// Get book details based on ISBN
+public_users.get('/isbn/:isbn',function (req, res) {
+  return res.status(200).json(books[req.params.isbn]);
+ });
+
+// Get book details based on ISBN
+public_users.get('/isbn', async (req, res) => {
+  try {
+    const bookFromAxios = await axios.get(`http://localhost:5000/isbn/${req.query.value}`);
+    return res.status(200).json(bookFromAxios.data);
+  } catch(error) {
+    if (error.response) {
+      return res.status(error.response.status).json({
+        message: "Failed to retrieve books by isbn",
+        error: error.response.data
+      });
+    }
+
+    return res.status(500).json({
+      message: "Unable to connect to the book service",
+      error: error.message
+    });
+  }
+})
+
+// Get book details based on author
+public_users.get('/author/:author',function (req, res) {
+  const booksList = Object.values(books).filter(item => item.author === req.params.author);
+  if(booksList.length === 0)  res.status(404).json({message: "no books by the author"})
+  return res.status(200).json(booksList);
+});
+
+// Get book details based on author
+public_users.get('/author', async (req, res) => {
+  try {
+    const bookFromAxios = await axios.get(`http://localhost:5000/author/${req.query.value}`);
+    return res.status(200).json(bookFromAxios.data);
+  } catch(error) {
+    if (error.response) {
+      return res.status(error.response.status).json({
+          message: "Failed to retrieve books by author",
+          error: error.response.data
+        });
+    }
+
+    return res.status(500).json({
+      message: "Unable to connect to the book service",
+      error: error.message
+    });
+  }
+})
+
+// Get all books based on title
+public_users.get('/title/:title',function (req, res) {
+  const book = Object.values(books).filter(item => item.title === req.params.title);
+  if(book.length > 0)  return res.status(200).json(book);
+  return res.status(404).json({message: "book not found"});
+});
+
+// Get all books based on title
+public_users.get('/title', async (req, res) => {
+  try {
+    const bookFromAxios = await axios.get(`http://localhost:5000/title/${req.query.value}`);
+    return res.status(200).json(bookFromAxios.data);
+  } catch(error) {
+    if (error.response) {
+      return res.status(error.response.status).json({
+        message: "Failed to retrieve books by title",
+        error: error.response.data
+      });
+    }
+
+    return res.status(500).json({
+      message: "Unable to connect to the book service",
+      error: error.message
+    });
   }
 })
 
